@@ -1,1 +1,0 @@
-# novisch-standings
