@@ -1,1 +1,1 @@
-# novisch-points
+# novisch-standings
