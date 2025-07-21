@@ -1,0 +1,142 @@
+"""
+    def git_push(self):
+        try:
+            # Add files
+            subprocess.run(["git", "add", "list.html", "Points_plot.png"], check=True)
+
+            # Commit with timestamp
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
+            commit_msg = f"Auto-update: {timestamp}"
+            subprocess.run(["git", "commit", "-m", commit_msg], check=False)
+
+            # Push to GitHub
+            push_result = subprocess.run(["git", "push"], capture_output=True, text=True)
+
+            if push_result.returncode == 0:
+                print("✅ Git push successful.")
+                return True
+            else:
+                print("❌ Git push failed.")
+                print(push_result.stderr)
+                return False
+
+        except Exception as e:
+            print(f"❌ Git error: {e}")
+            return False
+
+
+
+    # Add this method inside your GUI class
+    def upload(self, event=None):
+        self.generate_html()
+        self.make_plot()
+
+        success = self.git_push()
+
+        if success:
+            tk.messagebox.showinfo("Upload Complete", "✅ Files successfully pushed to GitHub.")
+        else:
+            tk.messagebox.showerror("Upload Failed", "❌ Git push failed. Check terminal for details.")
+
+    def upload_window(self, event=None):
+        upload_win = self.upload_window = tk.Toplevel()
+
+        label = tk.Label(upload_win, text="Push updated files to GitHub?")
+        label.grid(row=0, column=0, columnspan=2, pady=10)
+
+        ok = tk.Button(upload_win, text="Push", width=20, command=self.upload)
+        ok.grid(row=1, column=0)
+
+        cancel = tk.Button(upload_win, text="Cancel", width=20, command=upload_win.destroy)
+        cancel.grid(row=1, column=1)
+
+        upload_win.bind("<Return>", self.upload)
+"""
+
+
+
+
+    def upload(self, event=None):
+        try:
+            # Ensure fresh files are created before upload
+            self.generate_html()
+            self.make_plot()
+
+            SCOPES = ['https://www.googleapis.com/auth/drive']
+            SERVICE_ACCOUNT_FILE = 'wix-uploader-466311-6fa442ce9bc9.json'
+
+            # Authenticate
+            creds = service_account.Credentials.from_service_account_file(
+                SERVICE_ACCOUNT_FILE, scopes=SCOPES
+            )
+
+            # Build Drive service
+            drive_service = build('drive', 'v3', credentials=creds)
+
+            # Shared Drive folder ID
+            shared_drive_folder_id = '0AOBlqVom2XcGUk9PVA'
+
+            # Files to upload
+            files_to_upload = [
+                ("list.html", "text/html"),
+                ("Points_plot.png", "image/png"),
+            ]
+
+            for filename, mime_type in files_to_upload:
+                print(f"Uploading {filename}...")
+
+                # Check for existing file in Shared Drive folder
+                response = drive_service.files().list(
+                    q=f"name='{filename}' and '{shared_drive_folder_id}' in parents and trashed = false",
+                    spaces='drive',
+                    supportsAllDrives=True,
+                    includeItemsFromAllDrives=True,
+                    fields="files(id, name)"
+                ).execute()
+
+                existing_files = response.get('files', [])
+                media = MediaFileUpload(filename, mimetype=mime_type)
+
+                if existing_files:
+                    # Update existing file
+                    file_id = existing_files[0]['id']
+                    drive_service.files().update(
+                        fileId=file_id,
+                        media_body=media,
+                        supportsAllDrives=True
+                    ).execute()
+                    print(f"✔️ Updated '{filename}'")
+                else:
+                    # Upload new file
+                    file_metadata = {
+                        'name': filename,
+                        'parents': [shared_drive_folder_id]
+                    }
+                    drive_service.files().create(
+                        body=file_metadata,
+                        media_body=media,
+                        fields='id',
+                        supportsAllDrives=True
+                    ).execute()
+                    print(f"✔️ Uploaded new file '{filename}'")
+
+            tk.messagebox.showinfo("Upload Success", "Files uploaded to Shared Drive successfully!")
+
+        except Exception as e:
+            print(f"❌ Upload error: {e}")
+            tk.messagebox.showerror("Upload Failed", f"An error occurred:\n{e}")
+
+    def upload_window(self, event=None):
+        upload_win = tk.Toplevel()
+
+        label = tk.Label(upload_win, text="Upload updated files to Google Drive?")
+        label.grid(row=0, column=0, columnspan=2, pady=10)
+
+        ok = tk.Button(upload_win, text="Upload", width=20, command=self.upload)
+        ok.grid(row=1, column=0)
+
+        cancel = tk.Button(upload_win, text="Cancel", width=20, command=upload_win.destroy)
+        cancel.grid(row=1, column=1)
+
+        upload_win.bind("<Return>", self.upload)
+

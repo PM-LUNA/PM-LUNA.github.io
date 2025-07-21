@@ -355,7 +355,7 @@ glufs - GLuFS """)
         quest_owner = self.teamname.get()
         quest_number=int(self.number_entry.get())
         bonus_points=int(self.bonuspoints.get())
-        quest_value = int(quests["quest_value"].loc[quests['quest_number'] == quest_number])
+        quest_value = int(quests["quest_value"].loc[quests['quest_number'] == quest_number].iloc[0])
         quest_owner_onfile = quests.loc[quests['quest_number'] == quest_number,'quest_owner'].values[0]
         quest_repeat_onfile = quests.loc[quests['quest_number'] == quest_number,'quest_repeat'].values[0]
         

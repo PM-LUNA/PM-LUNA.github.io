@@ -4,15 +4,15 @@ quest_number;quest_description;quest_value;quest_repeat;quest_owner
 3;Have a race up sankt hans backar (1p per person);1;single;none
 4;Paint your nails in your student council colour (1p per person);1;single;none
 5;Recycle cans/bottles (panta) (1p for every 5th can, max points = 100) (Bonus when reaching max points );1;multiple;none
-6;Wear your lab coat to a lecture (1p per person);1;multiple;snys,
+6;Wear your lab coat to a lecture (1p per person);1;multiple;none
 7;High Five with a pizza baker - (points for different pizza bakers);2;multiple;none
 8;Hug a counselor (kurator, nation or not) – (points after the number of counselors);5;multiple;none
 9;Bathe in a fountain - (points for different fountains) (Not Lundagård);5;multiple;none
-10;Work out at the outdoor gym in winter clothing;5;single;lemur,
+10;Work out at the outdoor gym in winter clothing;5;single;none
 11;Perform a spex on Spexarevägen;5;single;none
 12;Bribe mentors with a cake;5;single;none
-13;Make posters for a non-existing course;5;single;glufs,snys,bug,lemur,
-14;Be BFFs with a professor;5;single;glufs,lemur,
+13;Make posters for a non-existing course;5;single;none
+14;Be BFFs with a professor;5;single;none
 15;Take pictures of a student dormitory (points after how gross it looks);5;single;none
 16;If Finn exists, find Finn;5;single;none
 17;Create a massive lab coat;5;single;none
